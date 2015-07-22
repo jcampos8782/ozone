@@ -3,7 +3,10 @@ Convert time based on offset, with or without dst
 =======
 # Ozone
 
-Given an offset (in minutes) and a boolean whether to observe daylight savings, convert a ruby time to a string representation, adjusted by offset, and either abiding by or ignoring daylight savings.
+Given a ruby time, an offset (in minutes), and a boolean whether to observe daylight savings, Ozone provides two things:
+
+1) Convert a ruby time to a string representation, adjusted by offset, and either abiding by or ignoring daylight savings.
+2) Compare with a ruby time to see whether before or after, either abiding by or ignoring daylight savings.
 
 ## Installation
 
@@ -23,15 +26,53 @@ Or install it yourself as:
 
 ## Usage
 
-Ozone has just one method -- call -- which takes a time, offset (from utc, in minutes), whether to use daylight savings, and a [time format](http://ruby-doc.org/core-2.2.0/Time.html#method-i-strftime). Default format is YYYY-MM-DD HH:MM.
+An instance of Ozone::Time can be compared with a ruby time.
+
+When observes_dst is true, Ozone::Time has the same value as ruby Time when making comparisons.
 
 ```ruby
-> Ozone.call(time: t, offset: -480, observes_dst: true)
+dst_time = Time.parse("2014-03-09 10:00:00 UTC")
+ozone_time = Ozone::Time.new(
+  time: dst_time,
+  offset: -480,
+  observes_dst: true,
+)
+
+> ozone_time.before?(1.second.since(dst_time))
+=> true
+> ozone_time.before?(1.second.until(dst_time))
+=> false
+```
+
+However, when observes_dst is false:
+
+```ruby
+ozone_time = Time.new(
+  time: time_with_dst,
+  offset: -480,
+  observes_dst: false,
+)
+
+> ozone_time.before?(1.second.since(time_with_dst)
+=> true
+> ozone_time.before?(1.second.until(time_with_dst)
+=> true
+```
+
+This is because during daylight savings, times will be adjusted backwards 1 hour if daylight savings
+is not being observed.
+
+Ozone::Formatter has one method -- call -- which takes a time, offset (from utc, in minutes), whether to use daylight savings, and a [time format](http://ruby-doc.org/core-2.2.0/Time.html#method-i-strftime). Default format is YYYY-MM-DD HH:MM.
+
+```ruby
+> Ozone::Formatter.call(time: t, offset: -480, observes_dst: true)
 => "2014/07/17 17:30"
 
-> Ozone.call(time: t, offset: -480, observes_dst: false)
+> Ozone::Formatter.call(time: t, offset: -480, observes_dst: false)
 => "2014/07/17 16:30"
 ```
+
+This functionality can also be accessed via the Ozone::Time#strftime method.
 
 ## Development
 
