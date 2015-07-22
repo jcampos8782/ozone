@@ -10,6 +10,15 @@ module Ozone
       timezone = ActiveSupport::TimeZone[offset/60]
       time_with_zone = time.in_time_zone(timezone)
       if time_with_zone.dst? && !observes_dst
+        # If we're during daylight savings time, but
+        # we are not observing daylight savings,
+        # there is a one-hour window where there is not
+        # an equivalent time between standard and daylight
+        # savings times. In order to deal with this,
+        # we subtract two hours from the offset and then
+        # take 2 hours from the given time. This frees
+        # us to string format the time without ruby
+        # making adjustments internally.
         offset -= 120
         timezone = ActiveSupport::TimeZone[offset/60]
         2.hours.since(time.in_time_zone(timezone)).strftime(format)
