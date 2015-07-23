@@ -48,14 +48,14 @@ However, when observes_dst is false:
 
 ```ruby
 ozone_time = Time.new(
-  time: time_with_dst,
+  time: dst_time,
   offset: -480,
   observes_dst: false,
 )
 
-> ozone_time.before?(1.second.since(time_with_dst)
+> ozone_time.before?(1.second.since(dst_time)
 => true
-> ozone_time.before?(1.second.until(time_with_dst)
+> ozone_time.before?(1.second.until(dst_time)
 => true
 ```
 
