@@ -106,9 +106,9 @@ module Ozone
             offset: -480,
             observes_dst: true,
           )
-          expect(ozone_time.before?(1.second.since(time_without_dst))).to be_truthy
-          expect(ozone_time.after?(1.second.since(time_without_dst))).to be_falsey
-          expect(ozone_time.before?(1.second.until(time_without_dst))).to be_falsey
+          expect(ozone_time < (1.second.since(time_without_dst))).to be_truthy
+          expect(ozone_time > (1.second.since(time_without_dst))).to be_falsey
+          expect(ozone_time < (1.second.until(time_without_dst))).to be_falsey
         end
 
         it 'converts a utc time to time with time zone and makes no dst adjustment' do
@@ -117,9 +117,9 @@ module Ozone
             offset: -480,
             observes_dst: false,
           )
-          expect(ozone_time.before?(1.second.since(time_without_dst))).to be_truthy
-          expect(ozone_time.after?(1.second.since(time_without_dst))).to be_falsey
-          expect(ozone_time.before?(1.second.until(time_without_dst))).to be_falsey
+          expect(ozone_time < (1.second.since(time_without_dst))).to be_truthy
+          expect(ozone_time > (1.second.since(time_without_dst))).to be_falsey
+          expect(ozone_time < (1.second.until(time_without_dst))).to be_falsey
         end
       end
 
@@ -132,8 +132,8 @@ module Ozone
             offset: -480,
             observes_dst: true,
           )
-          expect(ozone_time.before?(1.second.since(time_with_dst))).to be_truthy
-          expect(ozone_time.before?(1.second.until(time_with_dst))).to be_falsey
+          expect(ozone_time < (1.second.since(time_with_dst))).to be_truthy
+          expect(ozone_time < (1.second.until(time_with_dst))).to be_falsey
         end
 
         it 'converts a utc time to time with time zone and moves clocks back an hour' do
@@ -143,8 +143,63 @@ module Ozone
             observes_dst: false,
           )
 
-          expect(ozone_time.before?(1.second.since(time_with_dst))).to be_truthy
-          expect(ozone_time.before?(1.second.until(time_with_dst))).to be_truthy
+          expect(ozone_time < (1.second.since(time_with_dst))).to be_truthy
+          expect(ozone_time < (1.second.until(time_with_dst))).to be_truthy
+        end
+      end
+    end
+
+    describe '#<=>' do
+      context  'time outside daylight savings' do
+        let(:time_without_dst) { ::Time.parse("2014-03-09 09:59:00 UTC") }
+
+        it 'compares true o time with time zone and makes no dst adustment' do
+          ozone_time = Time.new(
+              time: time_without_dst,
+              offset: -480,
+              observes_dst: true,
+          )
+          expect(ozone_time <=> (1.second.since(time_without_dst))).to eq (-1)
+          expect(ozone_time <=> (1.second.until(time_without_dst))).to eq 1
+          expect(ozone_time <=> time_without_dst).to eq 0
+        end
+
+        it 'converts a utc time to time with time zone and makes no dst adjustment' do
+          ozone_time = Time.new(
+              time: time_without_dst,
+              offset: -480,
+              observes_dst: false,
+          )
+          expect(ozone_time <=> (1.second.until(time_without_dst))).to eq 1
+          expect(ozone_time <=> (1.second.since(time_without_dst))).to eq (-1)
+          expect(ozone_time <=> time_without_dst).to eq 0
+        end
+      end
+
+      context 'time is during daylight savings' do
+        let(:time_with_dst) { ::Time.parse("2014-03-09 10:00:00 UTC") }
+
+        it 'converts a utc time to time with time zone and makes no dst adustment' do
+          ozone_time = Time.new(
+              time: time_with_dst,
+              offset: -480,
+              observes_dst: true,
+          )
+          expect(ozone_time <=> (1.second.until(time_with_dst))).to eq 1
+          expect(ozone_time <=> (1.second.since(time_with_dst))).to eq (-1)
+          expect(ozone_time <=> time_with_dst).to eq 0
+        end
+
+        fit 'converts a utc time to time with time zone and moves clocks back an hour' do
+          ozone_time = Time.new(
+              time: time_with_dst,
+              offset: -480,
+              observes_dst: false,
+          )
+
+          expect(ozone_time <=> (1.hour.until(1.second.until(time_with_dst)))).to eq 1
+          expect(ozone_time <=> (1.hour.until(1.second.since(time_with_dst)))).to eq (-1)
+          expect(ozone_time <=> 1.hour.until(time_with_dst)).to eq 0
         end
       end
     end

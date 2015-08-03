@@ -36,17 +36,31 @@ module Ozone
       @time = time
     end
 
+    def <=> (time_with_zone)
+      if after?(time_with_zone)
+        1
+      elsif before?(time_with_zone)
+        -1
+      else
+        0
+      end
+    end
+
     def before?(time_with_zone)
       adjusted_time < time_with_zone
     end
 
     def after?(time_with_zone)
-      !before?(time_with_zone)
+      adjusted_time > time_with_zone
     end
 
     def strftime(format: '%Y-%m-%d %H:%M')
       Formatter.call(time: @time, offset: @offset, observes_dst: @observes_dst, format: format)
     end
+
+    alias_method :<, :before?
+    alias_method :>, :after?
+    alias_method :to_s, :strftime
 
     private
 
