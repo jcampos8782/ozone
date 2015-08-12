@@ -74,6 +74,8 @@ Ozone::Formatter has one method -- call -- which takes a time, offset (from utc,
 
 This functionality can also be accessed via the Ozone::Time#strftime method.
 
+### NOTE: Since all operations are executing in UTC time, the time zone in the format string will *always* be UTC
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
