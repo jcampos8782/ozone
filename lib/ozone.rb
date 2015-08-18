@@ -1,5 +1,4 @@
 require 'ozone/version'
-
 require 'active_support/time'
 
 module Ozone
@@ -18,8 +17,8 @@ module Ozone
       @time = time
     end
 
-    def <=>(time_with_zone)
-      adjusted_time <=> to_ozone_time(time_with_zone).adjusted_time
+    def <=>(other)
+      adjusted_time <=> to_ozone_time(other).adjusted_time
     end
 
     def before?(time_with_zone)
