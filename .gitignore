@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 *.gem
 *.rbc
 /.config
@@ -12,6 +11,7 @@
 /.bundle/
 /.yardoc
 /_yardoc/
+/.idea/
 
 ## Specific to RubyMotion:
 .dat*

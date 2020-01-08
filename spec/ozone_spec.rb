@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+# rubocop:disable Rails/TimeZone
 module Ozone
   describe Formatter do
     context 'given offset and observes daylight savings boolean' do
@@ -184,7 +185,7 @@ module Ozone
             offset: -480,
             observes_dst: true,
           )
-          expect(ozone_time <=> (1.second.since(time_without_dst))).to eq (-1)
+          expect(ozone_time <=> (1.second.since(time_without_dst))).to eq(-1)
           expect(ozone_time <=> (1.second.until(time_without_dst))).to eq 1
           expect(ozone_time <=> time_without_dst).to eq 0
         end
@@ -196,7 +197,7 @@ module Ozone
             observes_dst: false,
           )
           expect(ozone_time <=> (1.second.until(time_without_dst))).to eq 1
-          expect(ozone_time <=> (1.second.since(time_without_dst))).to eq (-1)
+          expect(ozone_time <=> (1.second.since(time_without_dst))).to eq(-1)
           expect(ozone_time <=> time_without_dst).to eq 0
         end
       end
@@ -211,7 +212,7 @@ module Ozone
             observes_dst: true,
           )
           expect(ozone_time <=> (1.second.until(time_with_dst))).to eq 1
-          expect(ozone_time <=> (1.second.since(time_with_dst))).to eq (-1)
+          expect(ozone_time <=> (1.second.since(time_with_dst))).to eq(-1)
           expect(ozone_time <=> time_with_dst).to eq 0
         end
 
@@ -223,10 +224,11 @@ module Ozone
           )
 
           expect(ozone_time <=> 1.second.until(time_with_dst)).to eq 1
-          expect(ozone_time <=> 1.second.since(time_with_dst)).to eq (-1)
+          expect(ozone_time <=> 1.second.since(time_with_dst)).to eq(-1)
           expect(ozone_time <=> time_with_dst).to eq 0
         end
       end
     end
   end
 end
+# rubocop:enable Rails/TimeZone

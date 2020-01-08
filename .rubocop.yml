@@ -1,0 +1,107 @@
+# Practice Fusion Rubocop Rules
+AllCops:
+  # Exclude anything that isn't really part of our code.
+  Exclude:
+    - '**/*.gemspec'
+    - '**/Guardfile' # mostly copy/paste
+    - '**/Rakefile'
+    - 'bin/**/*'
+    - 'config/initializers/secret_token.rb' # long tokens
+    - 'db/**/*' # auto-generated
+    - 'spec/rails_helper.rb' # full of solecisms, mostly copy and paste
+    - 'spec/teaspoon_env.rb' # mostly copy and paste
+    - 'spec/vcr_cassettes/**/*'
+    - 'vendor/**/*'
+  DisplayCopNames: true
+  RunRailsCops: true
+  DisplayStyleGuide: true
+
+# This is less volatile if methods change, and there's less busy work lining things up.
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+# Chain methods with trailing dots.
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+# It's not really clearer to replace every if with a return if.
+Style/GuardClause:
+  Enabled: false
+
+# Would enforce do_y if x over if x / do y / end. As with GuardClause above,
+# this enforces code organisation that doesn't necesarily make things clearer.
+IfUnlessModifier:
+  Enabled: false
+
+# Enforce single quotes everywhere except in specs (because there's a lot of
+# human text with apostrophes in spec names, and using double quotes for all
+# of those is more consistent. There shouldn't be much human-readable text in
+# the application code: that is better moved to the locale files.
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  Exclude:
+    - 'spec/**/*'
+
+# Trailing commas are totally fine.
+Style/TrailingComma:
+  Enabled: false
+
+# Just a preference to use %w[] over %w()
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%i': '[]'
+    '%w': '[]'
+    '%W': '[]'
+
+# We can tolerate a little additional complexity
+# http://c2.com/cgi/wiki?AbcMetric
+Metrics/AbcSize:
+  Max: 24
+  Exclude:
+    - 'spec/**/*'
+
+# We can tolerate a little additional complexity
+# http://c2.com/cgi/wiki?CyclomaticComplexityMetric
+Metrics/CyclomaticComplexity:
+  Max: 8
+  Exclude:
+    - 'spec/**/*'
+
+# We can tolerate a little additional complexity
+# http://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/PerceivedComplexity
+Metrics/PerceivedComplexity:
+  Max: 8
+  Exclude:
+    - 'spec/**/*'
+
+# Allow long lines in specs, as it's almost impossible to fit RSpec's
+# expectations into 80 characters.
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*'
+
+# Don't worry about long methods in specs.
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'spec/**/*'
+
+# Don't worry about long modules in specs.
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*'
+
+# Prefer sensible naming to comments everywhere.
+Documentation:
+  Description: Document classes and non-namespace modules.
+  Enabled: false
+
+# Would enforce do_y if x over if x / do y / end. As with GuardClause above,
+# this enforces code organisation that doesn't necesarily make things clearer.
+IfUnlessModifier:
+  Enabled: false
+
+# Don't allow assignment in conditionals, ever.
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: false
